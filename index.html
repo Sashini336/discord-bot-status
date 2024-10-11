@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -15,26 +15,25 @@
 <body>
     <h1>Discord Music Bot Status</h1>
     <p>Status: <span id="status">Checking...</span></p>
-    <p>Uptime: <span id="uptime"></span></p>
-    <p>Last Deployment: <span id="lastDeployment"></span></p>
-    <p>Guilds: <span id="guildCount"></span></p>
+    <p>Last Checked: <span id="lastChecked"></span></p>
 
     <script>
-        const BOT_URL = 'https://c801ce56-c4e3-49e8-8bfb-81eceec1778c.up.railway.app';
-        
+        const BOT_ID = '888881437569323009'; // Your bot's ID
+        const DISCORD_API_URL = `https://discord.com/api/v10/users/${BOT_ID}`;
+
         function updateStatus() {
-            axios.get(BOT_URL)
+            axios.get(DISCORD_API_URL)
                 .then(response => {
                     const data = response.data;
-                    document.getElementById('status').textContent = data.status;
-                    document.getElementById('status').className = data.status;
-                    document.getElementById('uptime').textContent = `${Math.floor(data.uptime / 3600)} hours, ${Math.floor((data.uptime % 3600) / 60)} minutes`;
-                    document.getElementById('lastDeployment').textContent = data.lastDeployment ? new Date(data.lastDeployment).toLocaleString() : 'N/A';
-                    document.getElementById('guildCount').textContent = data.guildCount;
+                    const status = data.bot ? 'Online' : 'Offline';
+                    document.getElementById('status').textContent = status;
+                    document.getElementById('status').className = status.toLowerCase();
+                    document.getElementById('lastChecked').textContent = new Date().toLocaleString();
                 })
                 .catch(error => {
                     document.getElementById('status').textContent = 'Offline';
                     document.getElementById('status').className = 'offline';
+                    document.getElementById('lastChecked').textContent = new Date().toLocaleString();
                     console.error('Error fetching status:', error);
                 });
         }
