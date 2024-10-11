@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Discord Music Bot Status</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; }
+        #status { font-weight: bold; }
+        .online { color: green; }
+        .offline { color: red; }
+    </style>
+</head>
+<body>
+    <h1>Discord Music Bot Status</h1>
+    <p>Status: <span id="status">Checking...</span></p>
+    <p>Uptime: <span id="uptime"></span></p>
+    <p>Last Deployment: <span id="lastDeployment"></span></p>
+    <p>Guilds: <span id="guildCount"></span></p>
+
+    <script>
+        const BOT_URL = 'https://c801ce56-c4e3-49e8-8bfb-81eceec1778c.up.railway.app/status';
+        
+        function updateStatus() {
+            axios.get(BOT_URL)
+                .then(response => {
+                    const data = response.data;
+                    document.getElementById('status').textContent = data.status;
+                    document.getElementById('status').className = data.status;
+                    document.getElementById('uptime').textContent = `${Math.floor(data.uptime / 3600)} hours, ${Math.floor((data.uptime % 3600) / 60)} minutes`;
+                    document.getElementById('lastDeployment').textContent = data.lastDeployment ? new Date(data.lastDeployment).toLocaleString() : 'N/A';
+                    document.getElementById('guildCount').textContent = data.guildCount;
+                })
+                .catch(error => {
+                    document.getElementById('status').textContent = 'Offline';
+                    document.getElementById('status').className = 'offline';
+                    console.error('Error fetching status:', error);
+                });
+        }
+
+        updateStatus();
+        setInterval(updateStatus, 60000); // Update every minute
+    </script>
+</body>
+</html>
